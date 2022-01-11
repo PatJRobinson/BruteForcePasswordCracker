@@ -1,8 +1,9 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+TODO: 
+1: add action event for radio buttons (and set default choice)
+2: use BruteForceCracker object to crack the entered hash
+3: test
+*/
 package bruteforcepassworkcracker;
 
 /**
@@ -11,10 +12,13 @@ package bruteforcepassworkcracker;
  */
 public class Gui extends javax.swing.JFrame {
 
+    
+    private BruteForceCracker cracker;
     /**
      * Creates new form Gui
      */
     public Gui() {
+        cracker = new BruteForceCracker();
         initComponents();
     }
 
@@ -35,6 +39,9 @@ public class Gui extends javax.swing.JFrame {
         rbLettersLower = new javax.swing.JRadioButton();
         rbNums = new javax.swing.JRadioButton();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        tfEnterLength = new javax.swing.JTextField();
+        bSetLength = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -59,10 +66,36 @@ public class Gui extends javax.swing.JFrame {
         jScrollPane1.setViewportView(taOutputPassword);
 
         rbLettersLower.setText("Lowercase letters");
+        rbLettersLower.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbLettersLowerActionPerformed(evt);
+            }
+        });
 
         rbNums.setText("Nums only");
+        rbNums.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbNumsActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Select alphabet");
+
+        jLabel2.setText("Select maximum length");
+
+        tfEnterLength.setText("Enter length");
+        tfEnterLength.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfEnterLengthActionPerformed(evt);
+            }
+        });
+
+        bSetLength.setText("Set");
+        bSetLength.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSetLengthActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -71,6 +104,11 @@ public class Gui extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(53, 53, 53)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(tfEnterLength, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bSetLength))
+                    .addComponent(jLabel2)
                     .addComponent(rbNums, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(tfEnterHash)
@@ -86,13 +124,19 @@ public class Gui extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(42, 42, 42)
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfEnterLength, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bSetLength))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rbLettersLower)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(rbNums)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 4, Short.MAX_VALUE)
                 .addComponent(tfEnterHash, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -115,10 +159,61 @@ public class Gui extends javax.swing.JFrame {
     private void bCrackPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCrackPasswordActionPerformed
         
         //1. Get password from text field
-        
+        String result = cracker.crack_password(tfEnterHash.getText());
+        if (result != null)
+        {
+            taOutputPassword.setText("Password is: " + result);
+        }
+        else
+        {
+            taOutputPassword.setText("Password not found");
+        }
         //2. 
         
     }//GEN-LAST:event_bCrackPasswordActionPerformed
+
+    private void tfEnterLengthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfEnterLengthActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfEnterLengthActionPerformed
+
+    private void bSetLengthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSetLengthActionPerformed
+        try
+        {
+            cracker.set_length(Integer.parseInt(tfEnterLength.getText()));
+        }
+        catch (Exception e)
+        {
+            System.out.println("Error [bSetLengthActionPerformed] : invalid input");
+            taOutputPassword.setText("Error: length must be an integer value, please try again");
+        }
+    }//GEN-LAST:event_bSetLengthActionPerformed
+
+    private void rbLettersLowerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbLettersLowerActionPerformed
+        boolean checked = rbLettersLower.isSelected();
+        if (checked)
+        {
+            rbNums.setSelected(false);
+            cracker.set_alphabet(1);
+        }
+        else
+        {
+            cracker.set_alphabet(-1);
+        }
+    }//GEN-LAST:event_rbLettersLowerActionPerformed
+
+    private void rbNumsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbNumsActionPerformed
+        boolean checked = rbNums.isSelected();
+        if (checked)
+        {
+            rbLettersLower.setSelected(false);
+            cracker.set_alphabet(2);
+        }
+        else
+        {
+            cracker.set_alphabet(-1);
+        }
+    }     
+    }//GEN-LAST:event_rbNumsActionPerformed
 
     /**
      * @param args the command line arguments
@@ -158,11 +253,14 @@ public class Gui extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bClear;
     private javax.swing.JButton bCrackPassword;
+    private javax.swing.JButton bSetLength;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton rbLettersLower;
     private javax.swing.JRadioButton rbNums;
     private javax.swing.JTextArea taOutputPassword;
     private javax.swing.JTextField tfEnterHash;
+    private javax.swing.JTextField tfEnterLength;
     // End of variables declaration//GEN-END:variables
 }

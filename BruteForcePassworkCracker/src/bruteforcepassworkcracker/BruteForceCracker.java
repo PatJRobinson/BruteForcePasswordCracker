@@ -6,6 +6,7 @@
 package bruteforcepassworkcracker;
 
 import java.util.*;
+import java.lang.Math;
 
 /**
  *
@@ -30,6 +31,11 @@ public class BruteForceCracker {
         alphabets = new ArrayList<char[]>();
         LENGTH_MAX = length;
         num_alphabets = 0;
+    }
+    
+    public void set_length(int length)
+    {
+        LENGTH_MAX = length;
     }
     
         /* Helpers ----------------------------------------
@@ -61,6 +67,16 @@ public class BruteForceCracker {
         num_alphabets++;
     }
     
+    public void set_alphabet(int selection)
+    {
+        alphabet_selection = selection;
+    }
+    
+    public int get_alphabet_selection()
+    {
+        return alphabet_selection;
+    }
+    
     public int get_num_alphabets()
     {
         return num_alphabets;
@@ -80,50 +96,64 @@ public class BruteForceCracker {
         
         //1. construct our initial candidate solution
         
-        String candidate = "";
+
+        char[] current_alphabet = alphabets.get(alphabet_selection);
         
         // 2. for each length of password 
-        for (int i = 0; i < LENGTH_MAX; i++)
+        for (int i = 1; i <= LENGTH_MAX; i++)
         {
-            candidate = "";
+            
+            // construct our candidate, with length set from loop
+            Candidate candidate = new Candidate(current_alphabet.length);
+            String s = "";
             for (int x = 0; x < i; x++)
             {
-                candidate += alphabets.get(alphabet_selection)[0];
+                candidate.add_member();
             }
             
-            // 3. for position = 0, try every possible character from alphabet
-            for (int x = 0; x < alphabets.get(alphabet_selection).length; x++)
+            
+            for (int y = 0; y < Math.pow(current_alphabet.length, i - 1); y++)
             {
-                candidate = replace_char(candidate, 0, alphabets.get(alphabet_selection)[x]);
-                try
+                
+                // 3. for position = 0, try every possible character from alphabet
+                for (int x = 0; x <current_alphabet.length; x++)
                 {
-                    String hashed_candidate = Sha1Encrypter.convert_to_SHA1(candidate);
-                    if (hashed_candidate.equals(hash))
+                    s = replace_char(s, 0, current_alphabet[x]);
+                    try
                     {
-                        found = hashed_candidate;
-                        return found; // Make sure breaks out of all loops ----------------------------------------------------------<<<<<<<<<<<<<<<
+                        String hashed_candidate = Sha1Encrypter.convert_to_SHA1(s);
+                        if (hashed_candidate.equals(hash))
+                        {
+                            found = hashed_candidate;
+                            return found; // Make sure breaks out of all loops ----------------------------------------------------------<<<<<<<<<<<<<<<
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.println("Error [crack password] : Something went wrong encrypting the candidate");
+                        return null;
                     }
                 }
-                catch (Exception e)
+                int pos = 1;
+                while (pos < i)
                 {
-                    System.out.println("Error [crack password] : Something went wrong encrypting the candidate");
+                    // increment character , go to step 1
+                    if (candidate.get_member(pos) == current_alphabet[current_alphabet.length - 1])
+                    {
+                        candidate.set_member(pos, 0);
+                        s = replace_char(s, pos, current_alphabet[0]);
+                        pos++;
+                    }
+                    else
+                    {
+                        candidate.increment_member(pos);
+                        s = replace_char(s, pos, current_alphabet[candidate.get_member(pos)]);
+                        pos = i;
+                    }
                 }
-            }
-            
-            // increment character , go to step 1
-            // else if next highest position exists go to step 2
-            // else finish 
-
-        
+            }                           
         }
-        
-        
-        
-                 
-        
-
-        
-        return "";
+        return null;
     } 
 
 }
